@@ -146,10 +146,40 @@ body {
   flex-shrink: 0;
 }
 
-.profile-follow-btn {
+.profile-actions {
   margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-follow-btn {
   padding: 6px 14px;
   font-size: 0.8rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.profile-message-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1.5px solid var(--brand);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--brand);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.profile-message-btn:hover {
+  background: var(--brand);
+  color: #fff;
+  transform: scale(1.05);
 }
 
 .edit-btn {

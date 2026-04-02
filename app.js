@@ -132,6 +132,45 @@ const mockPosts = [
   }
 ];
 
+// ===== Load User Posts from localStorage =====
+function loadUserPosts() {
+  const saved = localStorage.getItem("floinlove_user_posts");
+  if (!saved) return;
+  const userPosts = JSON.parse(saved);
+  // Prepend saved user posts to the beginning of mockPosts
+  mockPosts.unshift(...userPosts);
+}
+
+function saveUserPosts() {
+  const userPosts = mockPosts.filter(p => p.author === "You");
+  localStorage.setItem("floinlove_user_posts", JSON.stringify(userPosts));
+}
+
+loadUserPosts();
+
+// ===== Load Likes from localStorage =====
+function loadLikes() {
+  const saved = localStorage.getItem("floinlove_likes");
+  if (!saved) return;
+  const likesData = JSON.parse(saved);
+  mockPosts.forEach(post => {
+    if (likesData[post.id] !== undefined) {
+      post.likes = likesData[post.id].likes;
+      post.liked = likesData[post.id].liked;
+    }
+  });
+}
+
+function saveLikes() {
+  const likesData = {};
+  mockPosts.forEach(post => {
+    likesData[post.id] = { likes: post.likes, liked: post.liked };
+  });
+  localStorage.setItem("floinlove_likes", JSON.stringify(likesData));
+}
+
+loadLikes();
+
 // ===== Render =====
 const feed = document.getElementById("feed");
 
@@ -234,6 +273,7 @@ function attachLikeListeners() {
       icon.innerHTML = post.liked ? "&#9829;" : "&#9825;";
       count.textContent = post.likes;
       btn.classList.toggle("liked", post.liked);
+      saveLikes();
     });
   });
 }
@@ -309,7 +349,7 @@ overlay.addEventListener("click", e => {
   if (e.target === overlay) overlay.classList.remove("active");
 });
 
-let nextId = mockPosts.length + 1;
+let nextId = mockPosts.reduce((max, p) => Math.max(max, p.id), 0) + 1;
 
 form.addEventListener("submit", e => {
   e.preventDefault();
@@ -331,6 +371,8 @@ form.addEventListener("submit", e => {
   };
 
   mockPosts.unshift(newPost);
+  saveUserPosts();
+  saveLikes();
   renderFeed();
 
   form.reset();
@@ -397,6 +439,7 @@ editForm.addEventListener("submit", e => {
   if (editPendingImageDataUrl) post.image = editPendingImageDataUrl;
   post.time = "Edited just now";
 
+  saveUserPosts();
   renderFeed();
   editOverlay.classList.remove("active");
 });
@@ -538,6 +581,7 @@ function renderProfilePage() {
         icon.innerHTML = post.liked ? "&#9829;" : "&#9825;";
         count.textContent = post.likes;
         btn.classList.toggle("liked", post.liked);
+        saveLikes();
       });
     });
   }

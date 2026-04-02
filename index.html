@@ -98,10 +98,16 @@
           <h2 class="profile-name">You</h2>
           <p class="profile-bio">Flower enthusiast & nature lover</p>
         </div>
-        <button class="follow-btn profile-follow-btn following" id="profileFollowBtn">
-          <svg class="daisy-icon" viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="3" fill="currentColor"/><ellipse cx="12" cy="4.5" rx="2.2" ry="3.5" fill="currentColor" opacity=".85"/><ellipse cx="12" cy="19.5" rx="2.2" ry="3.5" fill="currentColor" opacity=".85"/><ellipse cx="4.5" cy="12" rx="3.5" ry="2.2" fill="currentColor" opacity=".85"/><ellipse cx="19.5" cy="12" rx="3.5" ry="2.2" fill="currentColor" opacity=".85"/><ellipse cx="6.7" cy="6.7" rx="2.2" ry="3.5" transform="rotate(45 6.7 6.7)" fill="currentColor" opacity=".85"/><ellipse cx="17.3" cy="17.3" rx="2.2" ry="3.5" transform="rotate(45 17.3 17.3)" fill="currentColor" opacity=".85"/><ellipse cx="17.3" cy="6.7" rx="2.2" ry="3.5" transform="rotate(-45 17.3 6.7)" fill="currentColor" opacity=".85"/><ellipse cx="6.7" cy="17.3" rx="2.2" ry="3.5" transform="rotate(-45 6.7 17.3)" fill="currentColor" opacity=".85"/></svg>
-          <span class="follow-label">Following</span>
-        </button>
+        <div class="profile-actions">
+          <button class="follow-btn profile-follow-btn following" id="profileFollowBtn">
+            <svg class="daisy-icon" viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="3" fill="currentColor"/><ellipse cx="12" cy="4.5" rx="2.2" ry="3.5" fill="currentColor" opacity=".85"/><ellipse cx="12" cy="19.5" rx="2.2" ry="3.5" fill="currentColor" opacity=".85"/><ellipse cx="4.5" cy="12" rx="3.5" ry="2.2" fill="currentColor" opacity=".85"/><ellipse cx="19.5" cy="12" rx="3.5" ry="2.2" fill="currentColor" opacity=".85"/><ellipse cx="6.7" cy="6.7" rx="2.2" ry="3.5" transform="rotate(45 6.7 6.7)" fill="currentColor" opacity=".85"/><ellipse cx="17.3" cy="17.3" rx="2.2" ry="3.5" transform="rotate(45 17.3 17.3)" fill="currentColor" opacity=".85"/><ellipse cx="17.3" cy="6.7" rx="2.2" ry="3.5" transform="rotate(-45 17.3 6.7)" fill="currentColor" opacity=".85"/><ellipse cx="6.7" cy="17.3" rx="2.2" ry="3.5" transform="rotate(-45 6.7 17.3)" fill="currentColor" opacity=".85"/></svg>
+            <span class="follow-label">Following</span>
+          </button>
+          <button class="profile-message-btn" id="profileMessageBtn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span>Message</span>
+          </button>
+        </div>
       </div>
       <div class="profile-stats">
         <div class="stat"><span class="stat-num" id="statPosts">0</span><span class="stat-label">Posts</span></div>
