@@ -543,5 +543,15 @@ function renderProfilePage() {
   }
 }
 
+// ===== Profile Follow Button =====
+const profileFollowBtn = document.getElementById("profileFollowBtn");
+let profileFollowing = true;
+
+profileFollowBtn.addEventListener("click", () => {
+  profileFollowing = !profileFollowing;
+  profileFollowBtn.classList.toggle("following", profileFollowing);
+  profileFollowBtn.querySelector(".follow-label").textContent = profileFollowing ? "Following" : "Follow";
+});
+
 // ===== Init =====
 renderFeed();
