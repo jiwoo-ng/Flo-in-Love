@@ -78,8 +78,8 @@ function getFollowersCount(authorName) {
   return count;
 }
 
-// ===== Mock Data =====
-const mockPosts = [
+// ===== Default Mock Data (used only on first ever load) =====
+const defaultPosts = [
   {
     id: 1,
     author: "Lily Chen",
@@ -89,8 +89,7 @@ const mockPosts = [
     tag: "#SpringBlooms",
     text: "My garden peonies finally opened today! Three months of careful watering and pruning paid off. The soft pink petals make every morning feel magical.",
     likes: 124,
-    comments: 18,
-    liked: false
+    comments: 18
   },
   {
     id: 2,
@@ -101,8 +100,7 @@ const mockPosts = [
     tag: "#RaisedBedGarden",
     text: "Built my first raised bed this weekend using cedar planks! Already planted tomatoes, basil, and marigolds along the border to keep pests away. Any companion planting tips?",
     likes: 287,
-    comments: 34,
-    liked: false
+    comments: 34
   },
   {
     id: 3,
@@ -113,8 +111,7 @@ const mockPosts = [
     tag: "#CherryBlossom",
     text: "Cherry blossom season in full swing! Every street in my neighborhood looks like a painting. Swept petals off the walkway three times today and I'm not even mad.",
     likes: 432,
-    comments: 56,
-    liked: false
+    comments: 56
   },
   {
     id: 4,
@@ -125,8 +122,7 @@ const mockPosts = [
     tag: "#CompostJourney",
     text: "Six months into composting and I finally got that dark, crumbly 'black gold' everyone talks about. Mixed it into my flower beds this morning and the soil looks incredible. Worth every turning!",
     likes: 198,
-    comments: 22,
-    liked: false
+    comments: 22
   },
   {
     id: 5,
@@ -137,8 +133,7 @@ const mockPosts = [
     tag: "#SunflowerGrow",
     text: "Planted sunflower seeds with my kids back in March. Now they're taller than the fence! The kids race out every morning to measure them. Gardening is the best family activity.",
     likes: 356,
-    comments: 41,
-    liked: false
+    comments: 41
   },
   {
     id: 6,
@@ -149,8 +144,7 @@ const mockPosts = [
     tag: "#BalconyGarden",
     text: "Proof you don't need a yard to garden! My tiny apartment balcony now has lavender, petunias, and a mini herb corner. The bees have already found it. Urban gardening for the win!",
     likes: 521,
-    comments: 67,
-    liked: false
+    comments: 67
   },
   {
     id: 7,
@@ -161,8 +155,7 @@ const mockPosts = [
     tag: "#OrchidCare",
     text: "After three failed attempts, my orchid finally bloomed again! The secret: ice cube watering once a week and indirect sunlight. Sometimes less is more with plant care.",
     likes: 89,
-    comments: 15,
-    liked: false
+    comments: 15
   },
   {
     id: 8,
@@ -173,8 +166,7 @@ const mockPosts = [
     tag: "#SeedStarting",
     text: "My indoor seed starting station is fully loaded! Trays of zinnias, cosmos, and wildflower mix under grow lights. In six weeks these little sprouts will transform the front yard.",
     likes: 267,
-    comments: 29,
-    liked: false
+    comments: 29
   },
   {
     id: 9,
@@ -185,8 +177,7 @@ const mockPosts = [
     tag: "#GardenFail",
     text: "Accidentally overwatered my succulents... again. Lost two echeverias to root rot this week. Sharing my failure so you don't repeat it. Let your soil dry completely between waterings!",
     likes: 178,
-    comments: 20,
-    liked: false
+    comments: 20
   },
   {
     id: 10,
@@ -197,87 +188,104 @@ const mockPosts = [
     tag: "#CottageGarden",
     text: "Two years ago this was just a bare patch of lawn. Now it's a full cottage garden with foxgloves, delphiniums, and climbing roses on the trellis. Patience and mulch do wonders!",
     likes: 312,
-    comments: 38,
-    liked: false
+    comments: 38
   }
 ];
 
-// ===== Mock Comments =====
-const mockComments = {
+const defaultComments = {
   2: [
-    { id: 1, postId: 2, author: "Lily Chen", avatar: "https://i.pravatar.cc/150?img=1", text: "Try planting nasturtiums near the tomatoes! They repel aphids and look gorgeous.", image: null, likes: 14, liked: false },
-    { id: 2, postId: 2, author: "Hana Kim", avatar: "https://i.pravatar.cc/150?img=5", text: "Love the cedar choice! I did mine with pine and regretted it within a year.", image: null, likes: 8, liked: false }
+    { id: 1, postId: 2, author: "Lily Chen", avatar: "https://i.pravatar.cc/150?img=1", text: "Try planting nasturtiums near the tomatoes! They repel aphids and look gorgeous.", image: null, likes: 14 },
+    { id: 2, postId: 2, author: "Hana Kim", avatar: "https://i.pravatar.cc/150?img=5", text: "Love the cedar choice! I did mine with pine and regretted it within a year.", image: null, likes: 8 }
   ],
   3: [
-    { id: 3, postId: 3, author: "Emma Taylor", avatar: "https://i.pravatar.cc/150?img=9", text: "This is absolutely stunning! I wish we had cherry blossoms in our area.", image: "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=200&h=200&fit=crop", likes: 22, liked: false },
-    { id: 4, postId: 3, author: "James Park", avatar: "https://i.pravatar.cc/150?img=12", text: "The petals make great natural confetti for spring gatherings!", image: null, likes: 11, liked: false }
+    { id: 3, postId: 3, author: "Emma Taylor", avatar: "https://i.pravatar.cc/150?img=9", text: "This is absolutely stunning! I wish we had cherry blossoms in our area.", image: "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=200&h=200&fit=crop", likes: 22 },
+    { id: 4, postId: 3, author: "James Park", avatar: "https://i.pravatar.cc/150?img=12", text: "The petals make great natural confetti for spring gatherings!", image: null, likes: 11 }
   ],
   6: [
-    { id: 5, postId: 6, author: "Aisha Patel", avatar: "https://i.pravatar.cc/150?img=23", text: "This gives me so much hope for my tiny studio balcony! What pots do you use?", image: null, likes: 19, liked: false },
-    { id: 6, postId: 6, author: "Marco Rossi", avatar: "https://i.pravatar.cc/150?img=11", text: "The bees finding your balcony is the best sign of a healthy garden!", image: null, likes: 31, liked: false }
+    { id: 5, postId: 6, author: "Aisha Patel", avatar: "https://i.pravatar.cc/150?img=23", text: "This gives me so much hope for my tiny studio balcony! What pots do you use?", image: null, likes: 19 },
+    { id: 6, postId: 6, author: "Marco Rossi", avatar: "https://i.pravatar.cc/150?img=11", text: "The bees finding your balcony is the best sign of a healthy garden!", image: null, likes: 31 }
   ]
 };
 
+// ===== Global Posts & Comments (shared across all users) =====
+let allPosts = [];
+let allComments = {};
 let nextCommentId = 7;
 
-// ===== Load/Save Comments from localStorage =====
-function loadComments() {
-  const saved = localStorage.getItem("floinlove_comments");
-  if (!saved) return;
-  const savedComments = JSON.parse(saved);
-  Object.keys(savedComments).forEach(postId => {
-    mockComments[postId] = savedComments[postId];
-  });
-  Object.values(mockComments).flat().forEach(c => {
+function loadAllPosts() {
+  const saved = localStorage.getItem("floinlove_all_posts");
+  if (saved) {
+    allPosts = JSON.parse(saved);
+  } else {
+    allPosts = JSON.parse(JSON.stringify(defaultPosts));
+  }
+}
+
+function saveAllPosts() {
+  localStorage.setItem("floinlove_all_posts", JSON.stringify(allPosts));
+}
+
+function loadAllComments() {
+  const saved = localStorage.getItem("floinlove_all_comments");
+  if (saved) {
+    allComments = JSON.parse(saved);
+  } else {
+    allComments = JSON.parse(JSON.stringify(defaultComments));
+  }
+  Object.values(allComments).flat().forEach(c => {
     if (c.id >= nextCommentId) nextCommentId = c.id + 1;
   });
 }
 
-function saveComments() {
-  localStorage.setItem("floinlove_comments", JSON.stringify(mockComments));
+function saveAllComments() {
+  localStorage.setItem("floinlove_all_comments", JSON.stringify(allComments));
 }
 
-loadComments();
-
-// ===== Load User Posts from localStorage =====
-function loadUserPosts() {
-  const saved = localStorage.getItem("floinlove_user_posts");
-  if (!saved) return;
-  const userPosts = JSON.parse(saved);
-  mockPosts.unshift(...userPosts);
+// ===== Per-User Liked State =====
+// Stored as { "postId": true } under key "floinlove_liked_<email>"
+function getUserLikedKey(email) {
+  return `floinlove_liked_${email}`;
 }
 
-function saveUserPosts() {
+function loadUserLikes() {
   const user = getCurrentUser();
   if (!user) return;
-  const userPosts = mockPosts.filter(p => p.author === user.name);
-  localStorage.setItem("floinlove_user_posts", JSON.stringify(userPosts));
-}
-
-loadUserPosts();
-
-// ===== Load Likes from localStorage =====
-function loadLikes() {
-  const saved = localStorage.getItem("floinlove_likes");
-  if (!saved) return;
-  const likesData = JSON.parse(saved);
-  mockPosts.forEach(post => {
-    if (likesData[post.id] !== undefined) {
-      post.likes = likesData[post.id].likes;
-      post.liked = likesData[post.id].liked;
-    }
+  const saved = localStorage.getItem(getUserLikedKey(user.email));
+  const likedMap = saved ? JSON.parse(saved) : {};
+  allPosts.forEach(post => {
+    post.liked = !!likedMap[post.id];
+  });
+  // Also load per-user comment likes
+  const commentLikedKey = `floinlove_comment_liked_${user.email}`;
+  const commentLiked = JSON.parse(localStorage.getItem(commentLikedKey) || "{}");
+  Object.values(allComments).flat().forEach(c => {
+    c.liked = !!commentLiked[c.id];
   });
 }
 
-function saveLikes() {
-  const likesData = {};
-  mockPosts.forEach(post => {
-    likesData[post.id] = { likes: post.likes, liked: post.liked };
+function saveUserLikes() {
+  const user = getCurrentUser();
+  if (!user) return;
+  const likedMap = {};
+  allPosts.forEach(post => {
+    if (post.liked) likedMap[post.id] = true;
   });
-  localStorage.setItem("floinlove_likes", JSON.stringify(likesData));
+  localStorage.setItem(getUserLikedKey(user.email), JSON.stringify(likedMap));
 }
 
-loadLikes();
+function saveUserCommentLikes() {
+  const user = getCurrentUser();
+  if (!user) return;
+  const commentLiked = {};
+  Object.values(allComments).flat().forEach(c => {
+    if (c.liked) commentLiked[c.id] = true;
+  });
+  localStorage.setItem(`floinlove_comment_liked_${user.email}`, JSON.stringify(commentLiked));
+}
+
+// Load global data on startup
+loadAllPosts();
+loadAllComments();
 
 // ===== Auth UI =====
 const authPage = document.getElementById("authPage");
@@ -369,6 +377,7 @@ document.getElementById("btnLogout").addEventListener("click", () => {
 function enterApp() {
   authPage.style.display = "none";
   appShell.style.display = "block";
+  loadUserLikes();
   applyUserAvatar();
   renderFeed();
   renderProfilePage();
@@ -398,7 +407,7 @@ function getAuthorAvatar(authorName) {
   const found = Object.values(users).find(u => u.name === authorName);
   if (found) return found.avatar;
   // Fall back to the post/comment avatar
-  const post = mockPosts.find(p => p.author === authorName);
+  const post = allPosts.find(p => p.author === authorName);
   if (post) return post.avatar;
   return "https://i.pravatar.cc/150?img=50";
 }
@@ -460,7 +469,7 @@ function renderCard(post) {
 }
 
 function getTopComments(postId, max) {
-  const comments = mockComments[postId] || [];
+  const comments = allComments[postId] || [];
   return comments.slice().sort((a, b) => b.likes - a.likes).slice(0, max);
 }
 
@@ -549,7 +558,7 @@ function attachCommentListeners(container) {
     btn.addEventListener("click", () => {
       const commentId = Number(btn.dataset.commentId);
       const postId = Number(btn.dataset.postId);
-      const comments = mockComments[postId];
+      const comments = allComments[postId];
       if (!comments) return;
       const comment = comments.find(c => c.id === commentId);
       if (!comment) return;
@@ -558,7 +567,8 @@ function attachCommentListeners(container) {
       btn.classList.toggle("liked", comment.liked);
       btn.querySelector(".comment-like-icon").innerHTML = comment.liked ? "&#9829;" : "&#9825;";
       btn.querySelector("span:last-child").textContent = comment.likes;
-      saveComments();
+      saveAllComments();
+      saveUserCommentLikes();
     });
   });
 
@@ -593,7 +603,7 @@ function submitComment(postId, container) {
   const text = input.value.trim();
   if (!text) return;
 
-  if (!mockComments[postId]) mockComments[postId] = [];
+  if (!allComments[postId]) allComments[postId] = [];
   const newComment = {
     id: nextCommentId++,
     postId,
@@ -604,12 +614,12 @@ function submitComment(postId, container) {
     likes: 0,
     liked: false
   };
-  mockComments[postId].push(newComment);
+  allComments[postId].push(newComment);
 
-  const post = mockPosts.find(p => p.id === postId);
+  const post = allPosts.find(p => p.id === postId);
   if (post) post.comments++;
 
-  saveComments();
+  saveAllComments();
   renderFeed();
   if (document.getElementById("pageProfile").classList.contains("active")) {
     renderProfilePage();
@@ -626,7 +636,7 @@ function attachAllListeners(container) {
 
 function renderFeed() {
   feed.innerHTML = "";
-  mockPosts.forEach(post => feed.appendChild(renderCard(post)));
+  allPosts.forEach(post => feed.appendChild(renderCard(post)));
   attachAllListeners(feed);
 }
 
@@ -635,7 +645,7 @@ function attachLikeListenersIn(container) {
   container.querySelectorAll(".like-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = Number(btn.dataset.id);
-      const post = mockPosts.find(p => p.id === id);
+      const post = allPosts.find(p => p.id === id);
       if (!post) return;
 
       post.liked = !post.liked;
@@ -646,7 +656,7 @@ function attachLikeListenersIn(container) {
       icon.innerHTML = post.liked ? "&#9829;" : "&#9825;";
       count.textContent = post.likes;
       btn.classList.toggle("liked", post.liked);
-      saveLikes();
+      saveUserLikes(); saveAllPosts();
     });
   });
 }
@@ -721,7 +731,7 @@ overlay.addEventListener("click", e => {
   if (e.target === overlay) overlay.classList.remove("active");
 });
 
-let nextId = mockPosts.reduce((max, p) => Math.max(max, p.id), 0) + 1;
+let nextId = allPosts.reduce((max, p) => Math.max(max, p.id), 0) + 1;
 
 form.addEventListener("submit", e => {
   e.preventDefault();
@@ -742,9 +752,9 @@ form.addEventListener("submit", e => {
     liked: false
   };
 
-  mockPosts.unshift(newPost);
-  saveUserPosts();
-  saveLikes();
+  allPosts.unshift(newPost);
+  saveAllPosts();
+  saveUserLikes(); saveAllPosts();
   renderFeed();
 
   form.reset();
@@ -778,7 +788,7 @@ editImageFile.addEventListener("change", () => {
 });
 
 function openEditModal(postId) {
-  const post = mockPosts.find(p => p.id === postId);
+  const post = allPosts.find(p => p.id === postId);
   if (!post) return;
   document.getElementById("editPostId").value = postId;
   document.getElementById("editPostTag").value = post.tag;
@@ -801,7 +811,7 @@ editOverlay.addEventListener("click", e => {
 editForm.addEventListener("submit", e => {
   e.preventDefault();
   const postId = Number(document.getElementById("editPostId").value);
-  const post = mockPosts.find(p => p.id === postId);
+  const post = allPosts.find(p => p.id === postId);
   if (!post) return;
 
   const tag = document.getElementById("editPostTag").value.trim();
@@ -810,7 +820,7 @@ editForm.addEventListener("submit", e => {
   if (editPendingImageDataUrl) post.image = editPendingImageDataUrl;
   post.time = "Edited just now";
 
-  saveUserPosts();
+  saveAllPosts();
   renderFeed();
   editOverlay.classList.remove("active");
 });
@@ -856,7 +866,7 @@ function renderFindPage() {
   const grid = document.getElementById("findGrid");
   const searchInput = document.getElementById("searchInput");
 
-  const allTags = [...new Set(mockPosts.map(p => p.tag))];
+  const allTags = [...new Set(allPosts.map(p => p.tag))];
 
   tagsContainer.innerHTML = allTags.map(tag =>
     `<button class="find-tag-chip" data-tag="${tag}">${tag}</button>`
@@ -872,7 +882,7 @@ function renderFindPage() {
     grid.querySelectorAll(".find-grid-item").forEach(item => {
       item.addEventListener("click", () => {
         navigateTo("pageHome");
-        const idx = mockPosts.findIndex(p => p.id === Number(item.dataset.id));
+        const idx = allPosts.findIndex(p => p.id === Number(item.dataset.id));
         if (idx >= 0) {
           const cards = document.querySelectorAll("#feed .card");
           if (cards[idx]) cards[idx].scrollIntoView({ behavior: "smooth", block: "center" });
@@ -881,7 +891,7 @@ function renderFindPage() {
     });
   }
 
-  renderGrid(mockPosts);
+  renderGrid(allPosts);
 
   let activeTag = null;
   tagsContainer.querySelectorAll(".find-tag-chip").forEach(chip => {
@@ -890,12 +900,12 @@ function renderFindPage() {
       if (activeTag === tag) {
         activeTag = null;
         chip.classList.remove("active");
-        renderGrid(mockPosts);
+        renderGrid(allPosts);
       } else {
         activeTag = tag;
         tagsContainer.querySelectorAll(".find-tag-chip").forEach(c => c.classList.remove("active"));
         chip.classList.add("active");
-        renderGrid(mockPosts.filter(p => p.tag === tag));
+        renderGrid(allPosts.filter(p => p.tag === tag));
       }
       searchInput.value = "";
     });
@@ -907,10 +917,10 @@ function renderFindPage() {
     activeTag = null;
 
     if (!q) {
-      renderGrid(mockPosts);
+      renderGrid(allPosts);
       return;
     }
-    const filtered = mockPosts.filter(p =>
+    const filtered = allPosts.filter(p =>
       p.tag.toLowerCase().includes(q) ||
       p.author.toLowerCase().includes(q) ||
       p.text.toLowerCase().includes(q)
@@ -932,7 +942,7 @@ function renderProfilePage() {
   document.getElementById("profileName").textContent = user.name;
   document.getElementById("profileBio").textContent = user.bio;
 
-  const myPosts = mockPosts.filter(p => p.author === user.name);
+  const myPosts = allPosts.filter(p => p.author === user.name);
   const totalLikes = myPosts.reduce((sum, p) => sum + p.likes, 0);
 
   document.getElementById("statPosts").textContent = myPosts.length;
@@ -957,8 +967,8 @@ function applyUserAvatar() {
   const avatar = user.avatar;
   document.getElementById("profileAvatarImg").src = avatar;
   // Update all posts and comments by this user
-  mockPosts.filter(p => p.author === user.name).forEach(p => p.avatar = avatar);
-  Object.values(mockComments).flat().filter(c => c.author === user.name).forEach(c => c.avatar = avatar);
+  allPosts.filter(p => p.author === user.name).forEach(p => p.avatar = avatar);
+  Object.values(allComments).flat().filter(c => c.author === user.name).forEach(c => c.avatar = avatar);
 }
 
 const avatarWrap = document.getElementById("profileAvatarWrap");
@@ -1021,8 +1031,8 @@ editProfileForm.addEventListener("submit", e => {
 
   // Update name in posts and comments
   if (oldName !== newName) {
-    mockPosts.filter(p => p.author === oldName).forEach(p => p.author = newName);
-    Object.values(mockComments).flat().filter(c => c.author === oldName).forEach(c => c.author = newName);
+    allPosts.filter(p => p.author === oldName).forEach(p => p.author = newName);
+    Object.values(allComments).flat().filter(c => c.author === oldName).forEach(c => c.author = newName);
 
     // Update follow data references
     const followData = getFollowData();
@@ -1032,8 +1042,8 @@ editProfileForm.addEventListener("submit", e => {
     });
     saveFollowData(followData);
 
-    saveUserPosts();
-    saveComments();
+    saveAllPosts();
+    saveAllComments();
   }
 
   updateCurrentUser({ name: newName, bio: newBio });
@@ -1053,7 +1063,7 @@ function openUserProfile(authorName) {
   document.getElementById("userProfileBio").textContent = getAuthorBio(authorName);
   document.getElementById("userProfilePostsTitle").textContent = `${authorName}'s Posts`;
 
-  const userPosts = mockPosts.filter(p => p.author === authorName);
+  const userPosts = allPosts.filter(p => p.author === authorName);
   const totalLikes = userPosts.reduce((sum, p) => sum + p.likes, 0);
 
   document.getElementById("userStatPosts").textContent = userPosts.length;
