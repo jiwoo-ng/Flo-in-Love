@@ -701,6 +701,141 @@ body {
   padding: 40px 20px;
 }
 
+/* ===== Comments Section ===== */
+.comments-section {
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.comment-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.comment-item + .comment-item {
+  border-top: 1px solid #f0f0f0;
+}
+
+.comment-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.comment-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-author {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.comment-text {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--text);
+  margin-top: 2px;
+  word-wrap: break-word;
+}
+
+.comment-image {
+  width: 100%;
+  max-width: 180px;
+  border-radius: 8px;
+  margin-top: 6px;
+  display: block;
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.comment-like-btn,
+.comment-reply-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.72rem;
+  color: var(--text-light);
+  padding: 2px 0;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.comment-like-btn:hover,
+.comment-reply-btn:hover {
+  transform: scale(1.1);
+}
+
+.comment-like-btn.liked {
+  color: var(--heart);
+}
+
+.comment-like-btn .comment-like-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.comment-reply-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.comment-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.comment-input-row input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.comment-input-row input:focus {
+  border-color: var(--brand);
+}
+
+.comment-send-btn {
+  background: var(--brand);
+  border: none;
+  color: #fff;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.comment-send-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.1);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 500px) {
   .feed {

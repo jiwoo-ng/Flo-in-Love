@@ -132,6 +132,44 @@ const mockPosts = [
   }
 ];
 
+// ===== Mock Comments =====
+const mockComments = {
+  2: [
+    { id: 1, postId: 2, author: "Lily Chen", avatar: "https://i.pravatar.cc/150?img=1", text: "Try planting nasturtiums near the tomatoes! They repel aphids and look gorgeous.", image: null, likes: 14, liked: false },
+    { id: 2, postId: 2, author: "Hana Kim", avatar: "https://i.pravatar.cc/150?img=5", text: "Love the cedar choice! I did mine with pine and regretted it within a year.", image: null, likes: 8, liked: false }
+  ],
+  3: [
+    { id: 3, postId: 3, author: "Emma Taylor", avatar: "https://i.pravatar.cc/150?img=9", text: "This is absolutely stunning! I wish we had cherry blossoms in our area.", image: "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=200&h=200&fit=crop", likes: 22, liked: false },
+    { id: 4, postId: 3, author: "James Park", avatar: "https://i.pravatar.cc/150?img=12", text: "The petals make great natural confetti for spring gatherings!", image: null, likes: 11, liked: false }
+  ],
+  6: [
+    { id: 5, postId: 6, author: "Aisha Patel", avatar: "https://i.pravatar.cc/150?img=23", text: "This gives me so much hope for my tiny studio balcony! What pots do you use?", image: null, likes: 19, liked: false },
+    { id: 6, postId: 6, author: "Marco Rossi", avatar: "https://i.pravatar.cc/150?img=11", text: "The bees finding your balcony is the best sign of a healthy garden!", image: null, likes: 31, liked: false }
+  ]
+};
+
+let nextCommentId = 7;
+
+// ===== Load/Save Comments from localStorage =====
+function loadComments() {
+  const saved = localStorage.getItem("floinlove_comments");
+  if (!saved) return;
+  const savedComments = JSON.parse(saved);
+  Object.keys(savedComments).forEach(postId => {
+    mockComments[postId] = savedComments[postId];
+  });
+  // Update nextCommentId
+  Object.values(mockComments).flat().forEach(c => {
+    if (c.id >= nextCommentId) nextCommentId = c.id + 1;
+  });
+}
+
+function saveComments() {
+  localStorage.setItem("floinlove_comments", JSON.stringify(mockComments));
+}
+
+loadComments();
+
 // ===== Load User Posts from localStorage =====
 function loadUserPosts() {
   const saved = localStorage.getItem("floinlove_user_posts");
@@ -213,13 +251,53 @@ function renderCard(post) {
         <span class="icon">${post.liked ? "&#9829;" : "&#9825;"}</span>
         <span class="count">${post.likes}</span>
       </button>
-      <button class="action-btn comment-btn">
+      <button class="action-btn comment-btn" data-id="${post.id}">
         <span class="icon">&#128172;</span>
         <span class="count">${post.comments}</span>
       </button>
     </div>
+    ${renderCommentsSection(post.id)}
   `;
   return card;
+}
+
+function getTopComments(postId, max) {
+  const comments = mockComments[postId] || [];
+  return comments.slice().sort((a, b) => b.likes - a.likes).slice(0, max);
+}
+
+function renderCommentsSection(postId) {
+  const topComments = getTopComments(postId, 2);
+  return `<div class="comments-section" data-post-id="${postId}">
+    ${topComments.map(c => renderCommentItem(c)).join("")}
+    <div class="comment-input-row">
+      <input type="text" class="comment-input" data-post-id="${postId}" placeholder="Add a comment...">
+      <button class="comment-send-btn" data-post-id="${postId}" aria-label="Send comment">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderCommentItem(c) {
+  return `<div class="comment-item" data-comment-id="${c.id}">
+    <img class="comment-avatar" src="${c.avatar}" alt="${c.author}">
+    <div class="comment-body">
+      <span class="comment-author">${c.author}</span>
+      <p class="comment-text">${c.text}</p>
+      ${c.image ? `<img class="comment-image" src="${c.image}" alt="comment image" loading="lazy">` : ""}
+      <div class="comment-actions">
+        <button class="comment-like-btn${c.liked ? " liked" : ""}" data-comment-id="${c.id}" data-post-id="${c.postId}">
+          <span class="comment-like-icon">${c.liked ? "&#9829;" : "&#9825;"}</span>
+          <span>${c.likes}</span>
+        </button>
+        <button class="comment-reply-btn" data-comment-id="${c.id}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+          <span>Reply</span>
+        </button>
+      </div>
+    </div>
+  </div>`;
 }
 
 function attachEditListeners(container) {
@@ -249,12 +327,99 @@ function attachFollowListeners(container) {
   });
 }
 
+function attachCommentListeners(container) {
+  // Comment button on card-actions - focus input
+  container.querySelectorAll(".card-actions .comment-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = btn.closest(".card");
+      const input = card.querySelector(".comment-input");
+      if (input) input.focus();
+    });
+  });
+
+  // Comment like buttons
+  container.querySelectorAll(".comment-like-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const commentId = Number(btn.dataset.commentId);
+      const postId = Number(btn.dataset.postId);
+      const comments = mockComments[postId];
+      if (!comments) return;
+      const comment = comments.find(c => c.id === commentId);
+      if (!comment) return;
+      comment.liked = !comment.liked;
+      comment.likes += comment.liked ? 1 : -1;
+      btn.classList.toggle("liked", comment.liked);
+      btn.querySelector(".comment-like-icon").innerHTML = comment.liked ? "&#9829;" : "&#9825;";
+      btn.querySelector("span:last-child").textContent = comment.likes;
+      saveComments();
+    });
+  });
+
+  // Comment reply buttons - focus the input
+  container.querySelectorAll(".comment-reply-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const section = btn.closest(".comments-section");
+      const input = section.querySelector(".comment-input");
+      const commentItem = btn.closest(".comment-item");
+      const author = commentItem.querySelector(".comment-author").textContent;
+      input.value = `@${author} `;
+      input.focus();
+    });
+  });
+
+  // Comment send buttons
+  container.querySelectorAll(".comment-send-btn").forEach(btn => {
+    btn.addEventListener("click", () => submitComment(Number(btn.dataset.postId), container));
+  });
+
+  // Enter key on comment inputs
+  container.querySelectorAll(".comment-input").forEach(input => {
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        submitComment(Number(input.dataset.postId), container);
+      }
+    });
+  });
+}
+
+function submitComment(postId, container) {
+  const section = container.querySelector(`.comments-section[data-post-id="${postId}"]`);
+  const input = section.querySelector(".comment-input");
+  const text = input.value.trim();
+  if (!text) return;
+
+  if (!mockComments[postId]) mockComments[postId] = [];
+  const newComment = {
+    id: nextCommentId++,
+    postId,
+    author: "You",
+    avatar: "https://i.pravatar.cc/150?img=50",
+    text,
+    image: null,
+    likes: 0,
+    liked: false
+  };
+  mockComments[postId].push(newComment);
+
+  // Update post comment count
+  const post = mockPosts.find(p => p.id === postId);
+  if (post) post.comments++;
+
+  saveComments();
+  renderFeed();
+  if (document.getElementById("pageProfile").classList.contains("active")) {
+    renderProfilePage();
+  }
+}
+
 function renderFeed() {
   feed.innerHTML = "";
   mockPosts.forEach(post => feed.appendChild(renderCard(post)));
   attachLikeListeners();
   attachEditListeners(feed);
   attachFollowListeners(feed);
+  attachCommentListeners(feed);
 }
 
 // ===== Like Toggle =====
@@ -568,6 +733,7 @@ function renderProfilePage() {
     myPosts.forEach(post => profileFeed.appendChild(renderCard(post)));
     attachEditListeners(profileFeed);
     attachFollowListeners(profileFeed);
+    attachCommentListeners(profileFeed);
     // Re-attach like listeners for profile feed cards
     profileFeed.querySelectorAll(".like-btn").forEach(btn => {
       btn.addEventListener("click", () => {
