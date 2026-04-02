@@ -623,12 +623,44 @@ body {
   margin-bottom: 20px;
 }
 
+.profile-avatar-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
 .profile-avatar {
   width: 72px;
   height: 72px;
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid var(--brand-light);
+}
+
+.avatar-edit-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  background: var(--brand);
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg);
+  transition: transform 0.15s;
+}
+
+.profile-avatar-wrap:hover .avatar-edit-overlay,
+.avatar-edit-overlay.visible {
+  display: flex;
+}
+
+.avatar-edit-overlay:hover {
+  transform: scale(1.1);
 }
 
 .profile-name {

@@ -394,7 +394,7 @@ function submitComment(postId, container) {
     id: nextCommentId++,
     postId,
     author: "You",
-    avatar: "https://i.pravatar.cc/150?img=50",
+    avatar: getUserAvatar(),
     text,
     image: null,
     likes: 0,
@@ -525,7 +525,7 @@ form.addEventListener("submit", e => {
   const newPost = {
     id: nextId++,
     author: "You",
-    avatar: "https://i.pravatar.cc/150?img=50",
+    avatar: getUserAvatar(),
     time: "Just now",
     image,
     tag: tag.startsWith("#") ? tag : `#${tag}`,
@@ -719,6 +719,10 @@ function renderProfilePage() {
   const profileFeed = document.getElementById("profileFeed");
   const emptyMsg = document.getElementById("emptyProfile");
 
+  // Update profile avatar
+  const profileImg = document.getElementById("profileAvatarImg");
+  if (profileImg) profileImg.src = getUserAvatar();
+
   const myPosts = mockPosts.filter(p => p.author === "You");
   const totalLikes = myPosts.reduce((sum, p) => sum + p.likes, 0);
 
@@ -761,6 +765,54 @@ profileFollowBtn.addEventListener("click", () => {
   profileFollowing = !profileFollowing;
   profileFollowBtn.classList.toggle("following", profileFollowing);
   profileFollowBtn.querySelector(".follow-label").textContent = profileFollowing ? "Following" : "Follow";
+});
+
+// ===== Profile Avatar Edit =====
+const DEFAULT_AVATAR = "https://i.pravatar.cc/150?img=50";
+
+function getUserAvatar() {
+  return localStorage.getItem("floinlove_avatar") || DEFAULT_AVATAR;
+}
+
+function setUserAvatar(dataUrl) {
+  localStorage.setItem("floinlove_avatar", dataUrl);
+  applyUserAvatar();
+}
+
+function applyUserAvatar() {
+  const avatar = getUserAvatar();
+  // Update profile page avatar
+  const profileImg = document.getElementById("profileAvatarImg");
+  if (profileImg) profileImg.src = avatar;
+  // Update all posts and comments by "You"
+  mockPosts.filter(p => p.author === "You").forEach(p => p.avatar = avatar);
+  Object.values(mockComments).flat().filter(c => c.author === "You").forEach(c => c.avatar = avatar);
+}
+
+// Apply saved avatar on load
+applyUserAvatar();
+
+// Avatar click -> show edit overlay and open file picker
+const avatarWrap = document.getElementById("profileAvatarWrap");
+const avatarOverlay = document.getElementById("avatarEditOverlay");
+const avatarFileInput = document.getElementById("avatarFileInput");
+
+avatarWrap.addEventListener("click", () => {
+  avatarOverlay.classList.add("visible");
+  avatarFileInput.click();
+});
+
+avatarFileInput.addEventListener("change", () => {
+  const file = avatarFileInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    setUserAvatar(e.target.result);
+    renderFeed();
+    renderProfilePage();
+  };
+  reader.readAsDataURL(file);
+  avatarFileInput.value = "";
 });
 
 // ===== Init =====
