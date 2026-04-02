@@ -1,3 +1,83 @@
+// ===== Auth System (localStorage) =====
+function getUsers() {
+  return JSON.parse(localStorage.getItem("floinlove_users") || "{}");
+}
+
+function saveUsers(users) {
+  localStorage.setItem("floinlove_users", JSON.stringify(users));
+}
+
+function getCurrentUser() {
+  const email = localStorage.getItem("floinlove_session");
+  if (!email) return null;
+  const users = getUsers();
+  return users[email] || null;
+}
+
+function setSession(email) {
+  localStorage.setItem("floinlove_session", email);
+}
+
+function clearSession() {
+  localStorage.removeItem("floinlove_session");
+}
+
+function updateCurrentUser(updates) {
+  const email = localStorage.getItem("floinlove_session");
+  if (!email) return;
+  const users = getUsers();
+  if (!users[email]) return;
+  Object.assign(users[email], updates);
+  saveUsers(users);
+}
+
+// ===== Follow System (localStorage) =====
+// Stored as { "userEmail": ["followedAuthorName1", ...] }
+function getFollowData() {
+  return JSON.parse(localStorage.getItem("floinlove_follows") || "{}");
+}
+
+function saveFollowData(data) {
+  localStorage.setItem("floinlove_follows", JSON.stringify(data));
+}
+
+function isFollowing(authorName) {
+  const user = getCurrentUser();
+  if (!user) return false;
+  const data = getFollowData();
+  const myFollows = data[user.email] || [];
+  return myFollows.includes(authorName);
+}
+
+function toggleFollow(authorName) {
+  const user = getCurrentUser();
+  if (!user) return false;
+  const data = getFollowData();
+  if (!data[user.email]) data[user.email] = [];
+  const idx = data[user.email].indexOf(authorName);
+  if (idx >= 0) {
+    data[user.email].splice(idx, 1);
+  } else {
+    data[user.email].push(authorName);
+  }
+  saveFollowData(data);
+  return data[user.email].includes(authorName);
+}
+
+function getFollowingCount(email) {
+  const data = getFollowData();
+  return (data[email] || []).length;
+}
+
+function getFollowersCount(authorName) {
+  const data = getFollowData();
+  let count = 0;
+  Object.values(data).forEach(list => {
+    if (list.includes(authorName)) count++;
+  });
+  return count;
+}
+
 // ===== Mock Data =====
 const mockPosts = [
   {
@@ -10,8 +90,7 @@ const mockPosts = [
     text: "My garden peonies finally opened today! Three months of careful watering and pruning paid off. The soft pink petals make every morning feel magical.",
     likes: 124,
     comments: 18,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 2,
@@ -23,8 +102,7 @@ const mockPosts = [
     text: "Built my first raised bed this weekend using cedar planks! Already planted tomatoes, basil, and marigolds along the border to keep pests away. Any companion planting tips?",
     likes: 287,
     comments: 34,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 3,
@@ -36,8 +114,7 @@ const mockPosts = [
     text: "Cherry blossom season in full swing! Every street in my neighborhood looks like a painting. Swept petals off the walkway three times today and I'm not even mad.",
     likes: 432,
     comments: 56,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 4,
@@ -49,8 +126,7 @@ const mockPosts = [
     text: "Six months into composting and I finally got that dark, crumbly 'black gold' everyone talks about. Mixed it into my flower beds this morning and the soil looks incredible. Worth every turning!",
     likes: 198,
     comments: 22,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 5,
@@ -62,8 +138,7 @@ const mockPosts = [
     text: "Planted sunflower seeds with my kids back in March. Now they're taller than the fence! The kids race out every morning to measure them. Gardening is the best family activity.",
     likes: 356,
     comments: 41,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 6,
@@ -75,8 +150,7 @@ const mockPosts = [
     text: "Proof you don't need a yard to garden! My tiny apartment balcony now has lavender, petunias, and a mini herb corner. The bees have already found it. Urban gardening for the win!",
     likes: 521,
     comments: 67,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 7,
@@ -88,8 +162,7 @@ const mockPosts = [
     text: "After three failed attempts, my orchid finally bloomed again! The secret: ice cube watering once a week and indirect sunlight. Sometimes less is more with plant care.",
     likes: 89,
     comments: 15,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 8,
@@ -101,8 +174,7 @@ const mockPosts = [
     text: "My indoor seed starting station is fully loaded! Trays of zinnias, cosmos, and wildflower mix under grow lights. In six weeks these little sprouts will transform the front yard.",
     likes: 267,
     comments: 29,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 9,
@@ -114,8 +186,7 @@ const mockPosts = [
     text: "Accidentally overwatered my succulents... again. Lost two echeverias to root rot this week. Sharing my failure so you don't repeat it. Let your soil dry completely between waterings!",
     likes: 178,
     comments: 20,
-    liked: false,
-    following: false
+    liked: false
   },
   {
     id: 10,
@@ -127,8 +198,7 @@ const mockPosts = [
     text: "Two years ago this was just a bare patch of lawn. Now it's a full cottage garden with foxgloves, delphiniums, and climbing roses on the trellis. Patience and mulch do wonders!",
     likes: 312,
     comments: 38,
-    liked: false,
-    following: false
+    liked: false
   }
 ];
 
@@ -158,7 +228,6 @@ function loadComments() {
   Object.keys(savedComments).forEach(postId => {
     mockComments[postId] = savedComments[postId];
   });
-  // Update nextCommentId
   Object.values(mockComments).flat().forEach(c => {
     if (c.id >= nextCommentId) nextCommentId = c.id + 1;
   });
@@ -175,12 +244,13 @@ function loadUserPosts() {
   const saved = localStorage.getItem("floinlove_user_posts");
   if (!saved) return;
   const userPosts = JSON.parse(saved);
-  // Prepend saved user posts to the beginning of mockPosts
   mockPosts.unshift(...userPosts);
 }
 
 function saveUserPosts() {
-  const userPosts = mockPosts.filter(p => p.author === "You");
+  const user = getCurrentUser();
+  if (!user) return;
+  const userPosts = mockPosts.filter(p => p.author === user.name);
   localStorage.setItem("floinlove_user_posts", JSON.stringify(userPosts));
 }
 
@@ -209,15 +279,142 @@ function saveLikes() {
 
 loadLikes();
 
+// ===== Auth UI =====
+const authPage = document.getElementById("authPage");
+const appShell = document.getElementById("appShell");
+const loginForm = document.getElementById("loginForm");
+const signupForm = document.getElementById("signupForm");
+const loginError = document.getElementById("loginError");
+const signupError = document.getElementById("signupError");
+
+document.getElementById("showSignup").addEventListener("click", () => {
+  loginForm.style.display = "none";
+  signupForm.style.display = "flex";
+  loginError.textContent = "";
+  signupError.textContent = "";
+});
+
+document.getElementById("showLogin").addEventListener("click", () => {
+  signupForm.style.display = "none";
+  loginForm.style.display = "flex";
+  loginError.textContent = "";
+  signupError.textContent = "";
+});
+
+signupForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const name = document.getElementById("signupName").value.trim();
+  const email = document.getElementById("signupEmail").value.trim().toLowerCase();
+  const password = document.getElementById("signupPassword").value;
+  const confirm = document.getElementById("signupConfirm").value;
+
+  signupError.textContent = "";
+
+  if (password !== confirm) {
+    signupError.textContent = "Passwords don't match.";
+    return;
+  }
+
+  const users = getUsers();
+  if (users[email]) {
+    signupError.textContent = "An account with this email already exists.";
+    return;
+  }
+
+  // Check if display name is taken
+  const nameTaken = Object.values(users).some(u => u.name.toLowerCase() === name.toLowerCase());
+  if (nameTaken) {
+    signupError.textContent = "This display name is already taken.";
+    return;
+  }
+
+  users[email] = {
+    email,
+    name,
+    password,
+    bio: "Flower enthusiast & nature lover",
+    avatar: `https://i.pravatar.cc/150?u=${encodeURIComponent(email)}`
+  };
+  saveUsers(users);
+  setSession(email);
+  signupForm.reset();
+  enterApp();
+});
+
+loginForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+
+  loginError.textContent = "";
+
+  const users = getUsers();
+  const user = users[email];
+  if (!user || user.password !== password) {
+    loginError.textContent = "Invalid email or password.";
+    return;
+  }
+
+  setSession(email);
+  loginForm.reset();
+  enterApp();
+});
+
+document.getElementById("btnLogout").addEventListener("click", () => {
+  clearSession();
+  appShell.style.display = "none";
+  authPage.style.display = "flex";
+});
+
+function enterApp() {
+  authPage.style.display = "none";
+  appShell.style.display = "block";
+  applyUserAvatar();
+  renderFeed();
+  renderProfilePage();
+}
+
 // ===== Render =====
 const feed = document.getElementById("feed");
+
+function getUserAvatar() {
+  const user = getCurrentUser();
+  return user ? user.avatar : "https://i.pravatar.cc/150?img=50";
+}
+
+function getUserName() {
+  const user = getCurrentUser();
+  return user ? user.name : "Anonymous";
+}
+
+function isOwnPost(post) {
+  const user = getCurrentUser();
+  return user && post.author === user.name;
+}
+
+function getAuthorAvatar(authorName) {
+  // Check registered users first
+  const users = getUsers();
+  const found = Object.values(users).find(u => u.name === authorName);
+  if (found) return found.avatar;
+  // Fall back to the post/comment avatar
+  const post = mockPosts.find(p => p.author === authorName);
+  if (post) return post.avatar;
+  return "https://i.pravatar.cc/150?img=50";
+}
+
+function getAuthorBio(authorName) {
+  const users = getUsers();
+  const found = Object.values(users).find(u => u.name === authorName);
+  return found ? found.bio : "Flower enthusiast & nature lover";
+}
 
 function renderCard(post) {
   const card = document.createElement("article");
   card.className = "card";
 
-  const isOwn = post.author === "You";
-  const editBtn = isOwn
+  const own = isOwnPost(post);
+  const editBtn = own
     ? `<button class="edit-btn" data-id="${post.id}" aria-label="Edit post">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -225,18 +422,19 @@ function renderCard(post) {
         </svg>
       </button>`
     : "";
-  const followBtn = !isOwn
-    ? `<button class="follow-btn${post.following ? " following" : ""}" data-id="${post.id}" aria-label="Follow">
+  const following = isFollowing(post.author);
+  const followBtn = !own
+    ? `<button class="follow-btn${following ? " following" : ""}" data-author="${post.author}" aria-label="Follow">
         <svg class="daisy-icon" viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="3" fill="currentColor"/><ellipse cx="12" cy="4.5" rx="2.2" ry="3.5" fill="currentColor" opacity=".85"/><ellipse cx="12" cy="19.5" rx="2.2" ry="3.5" fill="currentColor" opacity=".85"/><ellipse cx="4.5" cy="12" rx="3.5" ry="2.2" fill="currentColor" opacity=".85"/><ellipse cx="19.5" cy="12" rx="3.5" ry="2.2" fill="currentColor" opacity=".85"/><ellipse cx="6.7" cy="6.7" rx="2.2" ry="3.5" transform="rotate(45 6.7 6.7)" fill="currentColor" opacity=".85"/><ellipse cx="17.3" cy="17.3" rx="2.2" ry="3.5" transform="rotate(45 17.3 17.3)" fill="currentColor" opacity=".85"/><ellipse cx="17.3" cy="6.7" rx="2.2" ry="3.5" transform="rotate(-45 17.3 6.7)" fill="currentColor" opacity=".85"/><ellipse cx="6.7" cy="17.3" rx="2.2" ry="3.5" transform="rotate(-45 6.7 17.3)" fill="currentColor" opacity=".85"/></svg>
-        <span class="follow-label">${post.following ? "Following" : "Follow"}</span>
+        <span class="follow-label">${following ? "Following" : "Follow"}</span>
       </button>`
     : "";
 
   card.innerHTML = `
     <div class="card-header">
-      <img class="avatar" src="${post.avatar}" alt="${post.author}">
+      <img class="avatar avatar-link" src="${post.avatar}" alt="${post.author}" data-author="${post.author}">
       <div class="author-info">
-        <span class="author-name">${post.author}</span>
+        <span class="author-name avatar-link" data-author="${post.author}">${post.author}</span>
         <span class="post-time">${post.time}</span>
       </div>
       ${followBtn}${editBtn}
@@ -281,9 +479,9 @@ function renderCommentsSection(postId) {
 
 function renderCommentItem(c) {
   return `<div class="comment-item" data-comment-id="${c.id}">
-    <img class="comment-avatar" src="${c.avatar}" alt="${c.author}">
+    <img class="comment-avatar avatar-link" src="${c.avatar}" alt="${c.author}" data-author="${c.author}">
     <div class="comment-body">
-      <span class="comment-author">${c.author}</span>
+      <span class="comment-author avatar-link" data-author="${c.author}">${c.author}</span>
       <p class="comment-text">${c.text}</p>
       ${c.image ? `<img class="comment-image" src="${c.image}" alt="comment image" loading="lazy">` : ""}
       <div class="comment-actions">
@@ -300,6 +498,22 @@ function renderCommentItem(c) {
   </div>`;
 }
 
+function attachAvatarClickListeners(container) {
+  container.querySelectorAll(".avatar-link").forEach(el => {
+    el.addEventListener("click", e => {
+      e.stopPropagation();
+      const authorName = el.dataset.author;
+      if (!authorName) return;
+      const user = getCurrentUser();
+      if (user && authorName === user.name) {
+        navigateTo("pageProfile");
+      } else {
+        openUserProfile(authorName);
+      }
+    });
+  });
+}
+
 function attachEditListeners(container) {
   container.querySelectorAll(".edit-btn").forEach(btn => {
     btn.addEventListener("click", () => openEditModal(Number(btn.dataset.id)));
@@ -308,27 +522,21 @@ function attachEditListeners(container) {
 
 function attachFollowListeners(container) {
   container.querySelectorAll(".follow-btn").forEach(btn => {
+    if (btn.id === "userProfileFollowBtn" || btn.id === "profileFollowBtn") return;
     btn.addEventListener("click", () => {
-      const id = Number(btn.dataset.id);
-      const post = mockPosts.find(p => p.id === id);
-      if (!post) return;
-      // Toggle follow for all posts by same author
-      const newState = !post.following;
-      mockPosts.filter(p => p.author === post.author).forEach(p => p.following = newState);
+      const author = btn.dataset.author;
+      if (!author) return;
+      const nowFollowing = toggleFollow(author);
       // Update all visible follow buttons for this author
-      document.querySelectorAll(`.follow-btn[data-id]`).forEach(b => {
-        const bPost = mockPosts.find(p => p.id === Number(b.dataset.id));
-        if (bPost && bPost.author === post.author) {
-          b.classList.toggle("following", newState);
-          b.querySelector(".follow-label").textContent = newState ? "Following" : "Follow";
-        }
+      document.querySelectorAll(`.follow-btn[data-author="${author}"]`).forEach(b => {
+        b.classList.toggle("following", nowFollowing);
+        b.querySelector(".follow-label").textContent = nowFollowing ? "Following" : "Follow";
       });
     });
   });
 }
 
 function attachCommentListeners(container) {
-  // Comment button on card-actions - focus input
   container.querySelectorAll(".card-actions .comment-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const card = btn.closest(".card");
@@ -337,7 +545,6 @@ function attachCommentListeners(container) {
     });
   });
 
-  // Comment like buttons
   container.querySelectorAll(".comment-like-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const commentId = Number(btn.dataset.commentId);
@@ -355,7 +562,6 @@ function attachCommentListeners(container) {
     });
   });
 
-  // Comment reply buttons - focus the input
   container.querySelectorAll(".comment-reply-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const section = btn.closest(".comments-section");
@@ -367,12 +573,10 @@ function attachCommentListeners(container) {
     });
   });
 
-  // Comment send buttons
   container.querySelectorAll(".comment-send-btn").forEach(btn => {
     btn.addEventListener("click", () => submitComment(Number(btn.dataset.postId), container));
   });
 
-  // Enter key on comment inputs
   container.querySelectorAll(".comment-input").forEach(input => {
     input.addEventListener("keydown", e => {
       if (e.key === "Enter") {
@@ -393,7 +597,7 @@ function submitComment(postId, container) {
   const newComment = {
     id: nextCommentId++,
     postId,
-    author: "You",
+    author: getUserName(),
     avatar: getUserAvatar(),
     text,
     image: null,
@@ -402,7 +606,6 @@ function submitComment(postId, container) {
   };
   mockComments[postId].push(newComment);
 
-  // Update post comment count
   const post = mockPosts.find(p => p.id === postId);
   if (post) post.comments++;
 
@@ -413,18 +616,23 @@ function submitComment(postId, container) {
   }
 }
 
+function attachAllListeners(container) {
+  attachLikeListenersIn(container);
+  attachEditListeners(container);
+  attachFollowListeners(container);
+  attachCommentListeners(container);
+  attachAvatarClickListeners(container);
+}
+
 function renderFeed() {
   feed.innerHTML = "";
   mockPosts.forEach(post => feed.appendChild(renderCard(post)));
-  attachLikeListeners();
-  attachEditListeners(feed);
-  attachFollowListeners(feed);
-  attachCommentListeners(feed);
+  attachAllListeners(feed);
 }
 
 // ===== Like Toggle =====
-function attachLikeListeners() {
-  document.querySelectorAll(".like-btn").forEach(btn => {
+function attachLikeListenersIn(container) {
+  container.querySelectorAll(".like-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = Number(btn.dataset.id);
       const post = mockPosts.find(p => p.id === id);
@@ -486,7 +694,6 @@ postContent.addEventListener("input", () => {
   updateWordCounter();
 });
 
-// File upload preview for new post
 postImageFile.addEventListener("change", () => {
   const file = postImageFile.files[0];
   if (!file) return;
@@ -524,7 +731,7 @@ form.addEventListener("submit", e => {
 
   const newPost = {
     id: nextId++,
-    author: "You",
+    author: getUserName(),
     avatar: getUserAvatar(),
     time: "Just now",
     image,
@@ -577,7 +784,6 @@ function openEditModal(postId) {
   document.getElementById("editPostTag").value = post.tag;
   document.getElementById("editPostContent").value = post.text;
 
-  // Show current image as preview
   editPendingImageDataUrl = null;
   editImageFile.value = "";
   editUploadPreview.src = post.image;
@@ -612,6 +818,7 @@ editForm.addEventListener("submit", e => {
 // ===== Page Navigation =====
 const navBtns = document.querySelectorAll(".nav-btn");
 const pages = document.querySelectorAll(".page");
+let previousPage = "pageHome";
 
 function navigateTo(pageId) {
   pages.forEach(p => p.classList.remove("active"));
@@ -620,19 +827,22 @@ function navigateTo(pageId) {
   navBtns.forEach(btn => {
     const isTarget = btn.dataset.page === pageId;
     btn.classList.toggle("active", isTarget);
-
-    // Pop animation on click
     if (isTarget) {
       btn.classList.remove("pop");
-      void btn.offsetWidth; // trigger reflow
+      void btn.offsetWidth;
       btn.classList.add("pop");
     }
   });
 
-  // Render page-specific content
+  // Clear nav active state for special pages
+  if (pageId === "pageUserProfile") {
+    navBtns.forEach(btn => btn.classList.remove("active"));
+  }
+
   if (pageId === "pageFind") renderFindPage();
   if (pageId === "pageProfile") renderProfilePage();
 
+  previousPage = pageId;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -646,14 +856,12 @@ function renderFindPage() {
   const grid = document.getElementById("findGrid");
   const searchInput = document.getElementById("searchInput");
 
-  // Collect unique tags
   const allTags = [...new Set(mockPosts.map(p => p.tag))];
 
   tagsContainer.innerHTML = allTags.map(tag =>
     `<button class="find-tag-chip" data-tag="${tag}">${tag}</button>`
   ).join("");
 
-  // Render grid
   function renderGrid(posts) {
     grid.innerHTML = posts.map(post =>
       `<div class="find-grid-item" data-id="${post.id}">
@@ -661,7 +869,6 @@ function renderFindPage() {
       </div>`
     ).join("");
 
-    // Click grid item -> go to home and scroll to post
     grid.querySelectorAll(".find-grid-item").forEach(item => {
       item.addEventListener("click", () => {
         navigateTo("pageHome");
@@ -676,7 +883,6 @@ function renderFindPage() {
 
   renderGrid(mockPosts);
 
-  // Tag chip click filter
   let activeTag = null;
   tagsContainer.querySelectorAll(".find-tag-chip").forEach(chip => {
     chip.addEventListener("click", () => {
@@ -695,7 +901,6 @@ function renderFindPage() {
     });
   });
 
-  // Search input filter
   searchInput.addEventListener("input", () => {
     const q = searchInput.value.toLowerCase().trim();
     tagsContainer.querySelectorAll(".find-tag-chip").forEach(c => c.classList.remove("active"));
@@ -714,20 +919,26 @@ function renderFindPage() {
   });
 }
 
-// ===== Profile Page =====
+// ===== My Profile Page =====
 function renderProfilePage() {
+  const user = getCurrentUser();
+  if (!user) return;
+
   const profileFeed = document.getElementById("profileFeed");
   const emptyMsg = document.getElementById("emptyProfile");
 
-  // Update profile avatar
-  const profileImg = document.getElementById("profileAvatarImg");
-  if (profileImg) profileImg.src = getUserAvatar();
+  // Update profile header
+  document.getElementById("profileAvatarImg").src = user.avatar;
+  document.getElementById("profileName").textContent = user.name;
+  document.getElementById("profileBio").textContent = user.bio;
 
-  const myPosts = mockPosts.filter(p => p.author === "You");
+  const myPosts = mockPosts.filter(p => p.author === user.name);
   const totalLikes = myPosts.reduce((sum, p) => sum + p.likes, 0);
 
   document.getElementById("statPosts").textContent = myPosts.length;
   document.getElementById("statLikes").textContent = totalLikes;
+  document.getElementById("statFollowers").textContent = getFollowersCount(user.name);
+  document.getElementById("statFollowing").textContent = getFollowingCount(user.email);
 
   profileFeed.innerHTML = "";
   if (myPosts.length === 0) {
@@ -735,64 +946,21 @@ function renderProfilePage() {
   } else {
     emptyMsg.style.display = "none";
     myPosts.forEach(post => profileFeed.appendChild(renderCard(post)));
-    attachEditListeners(profileFeed);
-    attachFollowListeners(profileFeed);
-    attachCommentListeners(profileFeed);
-    // Re-attach like listeners for profile feed cards
-    profileFeed.querySelectorAll(".like-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = Number(btn.dataset.id);
-        const post = mockPosts.find(p => p.id === id);
-        if (!post) return;
-        post.liked = !post.liked;
-        post.likes += post.liked ? 1 : -1;
-        const icon = btn.querySelector(".icon");
-        const count = btn.querySelector(".count");
-        icon.innerHTML = post.liked ? "&#9829;" : "&#9825;";
-        count.textContent = post.likes;
-        btn.classList.toggle("liked", post.liked);
-        saveLikes();
-      });
-    });
+    attachAllListeners(profileFeed);
   }
 }
 
-// ===== Profile Follow Button =====
-const profileFollowBtn = document.getElementById("profileFollowBtn");
-let profileFollowing = true;
-
-profileFollowBtn.addEventListener("click", () => {
-  profileFollowing = !profileFollowing;
-  profileFollowBtn.classList.toggle("following", profileFollowing);
-  profileFollowBtn.querySelector(".follow-label").textContent = profileFollowing ? "Following" : "Follow";
-});
-
 // ===== Profile Avatar Edit =====
-const DEFAULT_AVATAR = "https://i.pravatar.cc/150?img=50";
-
-function getUserAvatar() {
-  return localStorage.getItem("floinlove_avatar") || DEFAULT_AVATAR;
-}
-
-function setUserAvatar(dataUrl) {
-  localStorage.setItem("floinlove_avatar", dataUrl);
-  applyUserAvatar();
-}
-
 function applyUserAvatar() {
-  const avatar = getUserAvatar();
-  // Update profile page avatar
-  const profileImg = document.getElementById("profileAvatarImg");
-  if (profileImg) profileImg.src = avatar;
-  // Update all posts and comments by "You"
-  mockPosts.filter(p => p.author === "You").forEach(p => p.avatar = avatar);
-  Object.values(mockComments).flat().filter(c => c.author === "You").forEach(c => c.avatar = avatar);
+  const user = getCurrentUser();
+  if (!user) return;
+  const avatar = user.avatar;
+  document.getElementById("profileAvatarImg").src = avatar;
+  // Update all posts and comments by this user
+  mockPosts.filter(p => p.author === user.name).forEach(p => p.avatar = avatar);
+  Object.values(mockComments).flat().filter(c => c.author === user.name).forEach(c => c.avatar = avatar);
 }
 
-// Apply saved avatar on load
-applyUserAvatar();
-
-// Avatar click -> show edit overlay and open file picker
 const avatarWrap = document.getElementById("profileAvatarWrap");
 const avatarOverlay = document.getElementById("avatarEditOverlay");
 const avatarFileInput = document.getElementById("avatarFileInput");
@@ -807,7 +975,8 @@ avatarFileInput.addEventListener("change", () => {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    setUserAvatar(e.target.result);
+    updateCurrentUser({ avatar: e.target.result });
+    applyUserAvatar();
     renderFeed();
     renderProfilePage();
   };
@@ -815,5 +984,133 @@ avatarFileInput.addEventListener("change", () => {
   avatarFileInput.value = "";
 });
 
+// ===== Edit Profile Modal =====
+const editProfileOverlay = document.getElementById("editProfileOverlay");
+const editProfileClose = document.getElementById("editProfileClose");
+const editProfileForm = document.getElementById("editProfileForm");
+
+document.getElementById("editProfileBtn").addEventListener("click", () => {
+  const user = getCurrentUser();
+  if (!user) return;
+  document.getElementById("editProfileName").value = user.name;
+  document.getElementById("editProfileBio").value = user.bio;
+  editProfileOverlay.classList.add("active");
+});
+
+editProfileClose.addEventListener("click", () => editProfileOverlay.classList.remove("active"));
+editProfileOverlay.addEventListener("click", e => {
+  if (e.target === editProfileOverlay) editProfileOverlay.classList.remove("active");
+});
+
+editProfileForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const user = getCurrentUser();
+  if (!user) return;
+
+  const newName = document.getElementById("editProfileName").value.trim();
+  const newBio = document.getElementById("editProfileBio").value.trim();
+  const oldName = user.name;
+
+  // Check name uniqueness (excluding self)
+  const users = getUsers();
+  const nameTaken = Object.values(users).some(u => u.email !== user.email && u.name.toLowerCase() === newName.toLowerCase());
+  if (nameTaken) {
+    alert("This display name is already taken.");
+    return;
+  }
+
+  // Update name in posts and comments
+  if (oldName !== newName) {
+    mockPosts.filter(p => p.author === oldName).forEach(p => p.author = newName);
+    Object.values(mockComments).flat().filter(c => c.author === oldName).forEach(c => c.author = newName);
+
+    // Update follow data references
+    const followData = getFollowData();
+    Object.keys(followData).forEach(email => {
+      const idx = followData[email].indexOf(oldName);
+      if (idx >= 0) followData[email][idx] = newName;
+    });
+    saveFollowData(followData);
+
+    saveUserPosts();
+    saveComments();
+  }
+
+  updateCurrentUser({ name: newName, bio: newBio });
+  editProfileOverlay.classList.remove("active");
+  renderFeed();
+  renderProfilePage();
+});
+
+// ===== Other User Profile Page =====
+let viewingUser = null;
+
+function openUserProfile(authorName) {
+  viewingUser = authorName;
+
+  document.getElementById("userProfileAvatar").src = getAuthorAvatar(authorName);
+  document.getElementById("userProfileName").textContent = authorName;
+  document.getElementById("userProfileBio").textContent = getAuthorBio(authorName);
+  document.getElementById("userProfilePostsTitle").textContent = `${authorName}'s Posts`;
+
+  const userPosts = mockPosts.filter(p => p.author === authorName);
+  const totalLikes = userPosts.reduce((sum, p) => sum + p.likes, 0);
+
+  document.getElementById("userStatPosts").textContent = userPosts.length;
+  document.getElementById("userStatLikes").textContent = totalLikes;
+  document.getElementById("userStatFollowers").textContent = getFollowersCount(authorName);
+
+  // Try to find this user's email for following count
+  const users = getUsers();
+  const foundUser = Object.values(users).find(u => u.name === authorName);
+  document.getElementById("userStatFollowing").textContent = foundUser ? getFollowingCount(foundUser.email) : 0;
+
+  // Follow button state
+  const followBtn = document.getElementById("userProfileFollowBtn");
+  const following = isFollowing(authorName);
+  followBtn.classList.toggle("following", following);
+  followBtn.querySelector(".follow-label").textContent = following ? "Following" : "Follow";
+
+  // Render their posts
+  const userFeed = document.getElementById("userProfileFeed");
+  const emptyMsg = document.getElementById("emptyUserProfile");
+  userFeed.innerHTML = "";
+
+  if (userPosts.length === 0) {
+    emptyMsg.style.display = "block";
+  } else {
+    emptyMsg.style.display = "none";
+    userPosts.forEach(post => userFeed.appendChild(renderCard(post)));
+    attachAllListeners(userFeed);
+  }
+
+  navigateTo("pageUserProfile");
+}
+
+document.getElementById("userProfileBack").addEventListener("click", () => {
+  if (previousPage === "pageUserProfile") {
+    navigateTo("pageHome");
+  } else {
+    navigateTo(previousPage);
+  }
+});
+
+document.getElementById("userProfileFollowBtn").addEventListener("click", () => {
+  if (!viewingUser) return;
+  const nowFollowing = toggleFollow(viewingUser);
+  const btn = document.getElementById("userProfileFollowBtn");
+  btn.classList.toggle("following", nowFollowing);
+  btn.querySelector(".follow-label").textContent = nowFollowing ? "Following" : "Follow";
+  document.getElementById("userStatFollowers").textContent = getFollowersCount(viewingUser);
+});
+
 // ===== Init =====
-renderFeed();
+(function init() {
+  const user = getCurrentUser();
+  if (user) {
+    enterApp();
+  } else {
+    authPage.style.display = "flex";
+    appShell.style.display = "none";
+  }
+})();

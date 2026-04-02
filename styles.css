@@ -351,7 +351,8 @@ body {
 }
 
 #newPostForm,
-#editPostForm {
+#editPostForm,
+#editProfileForm {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -360,7 +361,8 @@ body {
 #newPostForm input,
 #newPostForm textarea,
 #editPostForm input,
-#editPostForm textarea {
+#editPostForm textarea,
+#editProfileForm input {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 10px 12px;
@@ -374,7 +376,8 @@ body {
 #newPostForm input:focus,
 #newPostForm textarea:focus,
 #editPostForm input:focus,
-#editPostForm textarea:focus {
+#editPostForm textarea:focus,
+#editProfileForm input:focus {
   border-color: var(--brand);
 }
 
@@ -865,6 +868,169 @@ body {
 
 .comment-send-btn:hover {
   opacity: 0.85;
+  transform: scale(1.1);
+}
+
+/* ===== Auth Page ===== */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--brand-light) 0%, #fff 50%, #f0e6ff 100%);
+  padding: 20px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.auth-logo {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--brand);
+  margin-bottom: 4px;
+}
+
+.auth-tagline {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  margin-bottom: 28px;
+}
+
+.auth-form {
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-title {
+  font-size: 1.1rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.auth-form input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.auth-form input:focus {
+  border-color: var(--brand);
+}
+
+.auth-error {
+  color: var(--heart);
+  font-size: 0.8rem;
+  min-height: 1em;
+  margin: 0;
+}
+
+.auth-switch {
+  font-size: 0.82rem;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.auth-switch button {
+  background: none;
+  border: none;
+  color: var(--brand);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: inherit;
+}
+
+.auth-switch button:hover {
+  text-decoration: underline;
+}
+
+/* ===== Header Right ===== */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-logout {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+
+.btn-logout:hover {
+  color: var(--heart);
+  background: #fde8ea;
+}
+
+/* ===== Edit Profile Button ===== */
+.edit-profile-btn {
+  margin-top: 6px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.edit-profile-btn:hover {
+  border-color: var(--brand);
+  background: var(--brand-light);
+  color: var(--brand);
+}
+
+/* ===== Back Button ===== */
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--brand);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 0 0 12px;
+  transition: opacity 0.2s;
+}
+
+.back-btn:hover {
+  opacity: 0.7;
+}
+
+/* ===== Clickable Avatar ===== */
+.avatar-link {
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.avatar-link:hover {
   transform: scale(1.1);
 }
 
