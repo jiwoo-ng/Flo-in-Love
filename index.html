@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FloinLove - Flower Community</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header / Navigation -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">FloinLove</a>
+      <button class="btn-new-post" id="btnNewPost" aria-label="Write a post">+</button>
+    </div>
+  </header>
+
+  <!-- New Post Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>New Post</h2>
+        <button class="modal-close" id="modalClose">&times;</button>
+      </div>
+      <form id="newPostForm">
+        <input type="text" id="postTag" placeholder="#hashtag (e.g. #roses)" required>
+        <div class="textarea-wrap">
+          <textarea id="postContent" rows="4" placeholder="Share your flower moment..." required maxlength="3000"></textarea>
+          <span class="word-counter" id="wordCounter">500 words left</span>
+        </div>
+        <label class="upload-area" id="uploadArea">
+          <input type="file" id="postImageFile" accept="image/*" hidden>
+          <div class="upload-placeholder" id="uploadPlaceholder">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <span>Tap to upload a photo</span>
+          </div>
+          <img id="uploadPreview" class="upload-preview" src="" alt="Preview" style="display:none;">
+        </label>
+        <button type="submit" class="btn-submit">Post</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Post Modal -->
+  <div class="modal-overlay" id="editModalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Edit Post</h2>
+        <button class="modal-close" id="editModalClose">&times;</button>
+      </div>
+      <form id="editPostForm">
+        <input type="hidden" id="editPostId">
+        <input type="text" id="editPostTag" placeholder="#hashtag" required>
+        <textarea id="editPostContent" rows="4" placeholder="Update your post..." required></textarea>
+        <label class="upload-area" id="editUploadArea">
+          <input type="file" id="editPostImageFile" accept="image/*" hidden>
+          <div class="upload-placeholder" id="editUploadPlaceholder">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <span>Tap to change photo</span>
+          </div>
+          <img id="editUploadPreview" class="upload-preview" src="" alt="Preview" style="display:none;">
+        </label>
+        <button type="submit" class="btn-submit">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Pages -->
+  <main class="page active" id="pageHome">
+    <div class="feed" id="feed"></div>
+  </main>
+
+  <main class="page" id="pageFind">
+    <div class="find-container">
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by tag, author, or keyword...">
+      </div>
+      <div class="find-tags" id="findTags"></div>
+      <div class="find-grid" id="findGrid"></div>
+    </div>
+  </main>
+
+  <main class="page" id="pageProfile">
+    <div class="profile-container">
+      <div class="profile-header">
+        <img class="profile-avatar" src="https://i.pravatar.cc/150?img=50" alt="You">
+        <div class="profile-info">
+          <h2 class="profile-name">You</h2>
+          <p class="profile-bio">Flower enthusiast & nature lover</p>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat"><span class="stat-num" id="statPosts">0</span><span class="stat-label">Posts</span></div>
+        <div class="stat"><span class="stat-num" id="statLikes">0</span><span class="stat-label">Likes</span></div>
+      </div>
+      <h3 class="profile-section-title">My Posts</h3>
+      <div class="feed" id="profileFeed"></div>
+      <p class="empty-state" id="emptyProfile">You haven't posted yet. Tap + to share your first flower moment!</p>
+    </div>
+  </main>
+
+  <!-- Footer Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="pageHome" aria-label="Home">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-btn" data-page="pageFind" aria-label="Find">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span class="nav-label">Find</span>
+    </button>
+    <button class="nav-btn" data-page="pageProfile" aria-label="My Page">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span class="nav-label">My Page</span>
+    </button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
