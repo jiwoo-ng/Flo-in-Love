@@ -1,0 +1,335 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-04-02T08:44:16.759Z",
+  "activeFeatures": [
+    "FloinLove"
+  ],
+  "primaryFeature": "FloinLove",
+  "features": {
+    "FloinLove": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-04-02T06:15:02.244Z",
+        "lastUpdated": "2026-04-02T08:44:16.759Z"
+      },
+      "lastFile": "c:\\Users\\dieuc\\OneDrive\\Desktop\\FloinLove\\app.js"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-04-02T06:13:02.453Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-04-02T08:44:16.759Z"
+  },
+  "history": [
+    {
+      "timestamp": "2026-04-02T06:15:02.244Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:33:46.559Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:38:12.838Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:39:42.521Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:41:14.432Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:42:14.729Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:42:21.569Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:45:13.810Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:45:27.139Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:45:38.480Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:45:46.253Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:49:01.359Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:49:20.584Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:57:50.247Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T06:57:57.453Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:01:57.366Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:15:33.423Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:15:41.546Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:15:47.718Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:15:58.128Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:16:04.499Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:16:10.262Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:16:16.581Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:16:23.891Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:16:31.386Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:16:37.881Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:16:44.947Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:16:50.933Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:17:02.108Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:17:09.898Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:19:22.817Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:26:19.804Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:26:45.687Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:27:00.786Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:27:06.839Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:29:13.592Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:29:20.002Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:29:29.202Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T07:29:41.573Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:30:25.005Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:30:41.757Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:30:47.940Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:31:12.181Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:31:25.320Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:31:34.185Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:31:46.432Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:43:54.080Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:44:01.715Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:44:08.222Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-04-02T08:44:16.759Z",
+      "feature": "FloinLove",
+      "phase": "do",
+      "action": "updated"
+    }
+  ]
+}
