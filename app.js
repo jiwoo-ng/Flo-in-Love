@@ -10,7 +10,8 @@ const mockPosts = [
     text: "My garden peonies finally opened today! Three months of careful watering and pruning paid off. The soft pink petals make every morning feel magical.",
     likes: 124,
     comments: 18,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 2,
@@ -22,7 +23,8 @@ const mockPosts = [
     text: "Built my first raised bed this weekend using cedar planks! Already planted tomatoes, basil, and marigolds along the border to keep pests away. Any companion planting tips?",
     likes: 287,
     comments: 34,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 3,
@@ -34,7 +36,8 @@ const mockPosts = [
     text: "Cherry blossom season in full swing! Every street in my neighborhood looks like a painting. Swept petals off the walkway three times today and I'm not even mad.",
     likes: 432,
     comments: 56,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 4,
@@ -46,7 +49,8 @@ const mockPosts = [
     text: "Six months into composting and I finally got that dark, crumbly 'black gold' everyone talks about. Mixed it into my flower beds this morning and the soil looks incredible. Worth every turning!",
     likes: 198,
     comments: 22,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 5,
@@ -58,7 +62,8 @@ const mockPosts = [
     text: "Planted sunflower seeds with my kids back in March. Now they're taller than the fence! The kids race out every morning to measure them. Gardening is the best family activity.",
     likes: 356,
     comments: 41,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 6,
@@ -70,7 +75,8 @@ const mockPosts = [
     text: "Proof you don't need a yard to garden! My tiny apartment balcony now has lavender, petunias, and a mini herb corner. The bees have already found it. Urban gardening for the win!",
     likes: 521,
     comments: 67,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 7,
@@ -82,7 +88,8 @@ const mockPosts = [
     text: "After three failed attempts, my orchid finally bloomed again! The secret: ice cube watering once a week and indirect sunlight. Sometimes less is more with plant care.",
     likes: 89,
     comments: 15,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 8,
@@ -94,7 +101,8 @@ const mockPosts = [
     text: "My indoor seed starting station is fully loaded! Trays of zinnias, cosmos, and wildflower mix under grow lights. In six weeks these little sprouts will transform the front yard.",
     likes: 267,
     comments: 29,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 9,
@@ -106,7 +114,8 @@ const mockPosts = [
     text: "Accidentally overwatered my succulents... again. Lost two echeverias to root rot this week. Sharing my failure so you don't repeat it. Let your soil dry completely between waterings!",
     likes: 178,
     comments: 20,
-    liked: false
+    liked: false,
+    following: false
   },
   {
     id: 10,
@@ -118,7 +127,8 @@ const mockPosts = [
     text: "Two years ago this was just a bare patch of lawn. Now it's a full cottage garden with foxgloves, delphiniums, and climbing roses on the trellis. Patience and mulch do wonders!",
     likes: 312,
     comments: 38,
-    liked: false
+    liked: false,
+    following: false
   }
 ];
 
@@ -138,6 +148,12 @@ function renderCard(post) {
         </svg>
       </button>`
     : "";
+  const followBtn = !isOwn
+    ? `<button class="follow-btn${post.following ? " following" : ""}" data-id="${post.id}" aria-label="Follow">
+        <svg class="daisy-icon" viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="3" fill="currentColor"/><ellipse cx="12" cy="4.5" rx="2.2" ry="3.5" fill="currentColor" opacity=".85"/><ellipse cx="12" cy="19.5" rx="2.2" ry="3.5" fill="currentColor" opacity=".85"/><ellipse cx="4.5" cy="12" rx="3.5" ry="2.2" fill="currentColor" opacity=".85"/><ellipse cx="19.5" cy="12" rx="3.5" ry="2.2" fill="currentColor" opacity=".85"/><ellipse cx="6.7" cy="6.7" rx="2.2" ry="3.5" transform="rotate(45 6.7 6.7)" fill="currentColor" opacity=".85"/><ellipse cx="17.3" cy="17.3" rx="2.2" ry="3.5" transform="rotate(45 17.3 17.3)" fill="currentColor" opacity=".85"/><ellipse cx="17.3" cy="6.7" rx="2.2" ry="3.5" transform="rotate(-45 17.3 6.7)" fill="currentColor" opacity=".85"/><ellipse cx="6.7" cy="17.3" rx="2.2" ry="3.5" transform="rotate(-45 6.7 17.3)" fill="currentColor" opacity=".85"/></svg>
+        <span class="follow-label">${post.following ? "Following" : "Follow"}</span>
+      </button>`
+    : "";
 
   card.innerHTML = `
     <div class="card-header">
@@ -146,7 +162,7 @@ function renderCard(post) {
         <span class="author-name">${post.author}</span>
         <span class="post-time">${post.time}</span>
       </div>
-      ${editBtn}
+      ${followBtn}${editBtn}
     </div>
     <img class="card-image" src="${post.image}" alt="${post.tag}" loading="lazy">
     <div class="card-body">
@@ -173,11 +189,33 @@ function attachEditListeners(container) {
   });
 }
 
+function attachFollowListeners(container) {
+  container.querySelectorAll(".follow-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = Number(btn.dataset.id);
+      const post = mockPosts.find(p => p.id === id);
+      if (!post) return;
+      // Toggle follow for all posts by same author
+      const newState = !post.following;
+      mockPosts.filter(p => p.author === post.author).forEach(p => p.following = newState);
+      // Update all visible follow buttons for this author
+      document.querySelectorAll(`.follow-btn[data-id]`).forEach(b => {
+        const bPost = mockPosts.find(p => p.id === Number(b.dataset.id));
+        if (bPost && bPost.author === post.author) {
+          b.classList.toggle("following", newState);
+          b.querySelector(".follow-label").textContent = newState ? "Following" : "Follow";
+        }
+      });
+    });
+  });
+}
+
 function renderFeed() {
   feed.innerHTML = "";
   mockPosts.forEach(post => feed.appendChild(renderCard(post)));
   attachLikeListeners();
   attachEditListeners(feed);
+  attachFollowListeners(feed);
 }
 
 // ===== Like Toggle =====
@@ -486,6 +524,7 @@ function renderProfilePage() {
     emptyMsg.style.display = "none";
     myPosts.forEach(post => profileFeed.appendChild(renderCard(post)));
     attachEditListeners(profileFeed);
+    attachFollowListeners(profileFeed);
     // Re-attach like listeners for profile feed cards
     profileFeed.querySelectorAll(".like-btn").forEach(btn => {
       btn.addEventListener("click", () => {

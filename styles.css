@@ -109,8 +109,45 @@ body {
   position: relative;
 }
 
-.edit-btn {
+/* Follow Button */
+.follow-btn {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--brand-light);
+  border: none;
+  cursor: pointer;
+  color: var(--brand);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+}
+
+.follow-btn:hover {
+  background: var(--brand);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.follow-btn.following {
+  background: var(--brand);
+  color: #fff;
+}
+
+.follow-btn.following:hover {
+  opacity: 0.85;
+}
+
+.follow-btn .daisy-icon {
+  flex-shrink: 0;
+}
+
+.edit-btn {
+  margin-left: 8px;
   background: none;
   border: none;
   cursor: pointer;
@@ -584,6 +621,19 @@ body {
   align-items: center;
 }
 
+.stat-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.stat-btn:hover {
+  background: var(--brand-light);
+}
+
 .stat-num {
   font-size: 1.1rem;
   font-weight: 700;
@@ -592,6 +642,13 @@ body {
 .stat-label {
   font-size: 0.75rem;
   color: var(--text-light);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.stat-label svg {
+  flex-shrink: 0;
 }
 
 .profile-section-title {
