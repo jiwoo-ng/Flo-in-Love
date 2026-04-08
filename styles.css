@@ -886,6 +886,20 @@ body {
   padding: 0 14px 10px;
 }
 
+.comments-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary, #8e8e8e);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 0;
+  display: block;
+}
+
+.comments-toggle-btn:hover {
+  color: var(--text-primary, #262626);
+}
+
 .comment-item {
   display: flex;
   gap: 10px;

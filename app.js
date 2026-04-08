@@ -474,9 +474,15 @@ function getTopComments(postId, max) {
 }
 
 function renderCommentsSection(postId) {
-  const topComments = getTopComments(postId, 2);
-  return `<div class="comments-section" data-post-id="${postId}">
-    ${topComments.map(c => renderCommentItem(c)).join("")}
+  const allPostComments = allComments[postId] || [];
+  const sorted = allPostComments.slice().sort((a, b) => b.likes - a.likes);
+  const preview = sorted.slice(0, 2);
+  const hasMore = sorted.length > 2;
+  return `<div class="comments-section" data-post-id="${postId}" style="display:none;">
+    <div class="comments-list" data-post-id="${postId}">
+      ${preview.map(c => renderCommentItem(c)).join("")}
+    </div>
+    ${hasMore ? `<button class="comments-toggle-btn show-more-btn" data-post-id="${postId}">Show more</button>` : ""}
     <div class="comment-input-row">
       <input type="text" class="comment-input" data-post-id="${postId}" placeholder="Add a comment...">
       <button class="comment-send-btn" data-post-id="${postId}" aria-label="Send comment">
@@ -549,8 +555,14 @@ function attachCommentListeners(container) {
   container.querySelectorAll(".card-actions .comment-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const card = btn.closest(".card");
-      const input = card.querySelector(".comment-input");
-      if (input) input.focus();
+      const section = card.querySelector(".comments-section");
+      if (!section) return;
+      const isHidden = section.style.display === "none";
+      section.style.display = isHidden ? "" : "none";
+      if (isHidden) {
+        const input = card.querySelector(".comment-input");
+        if (input) input.focus();
+      }
     });
   });
 
@@ -580,6 +592,29 @@ function attachCommentListeners(container) {
       const author = commentItem.querySelector(".comment-author").textContent;
       input.value = `@${author} `;
       input.focus();
+    });
+  });
+
+  container.querySelectorAll(".comments-toggle-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const postId = Number(btn.dataset.postId);
+      const section = btn.closest(".comments-section");
+      const listEl = section.querySelector(".comments-list");
+      const isShowingMore = btn.classList.contains("show-less-btn");
+      const sorted = (allComments[postId] || []).slice().sort((a, b) => b.likes - a.likes);
+      if (isShowingMore) {
+        listEl.innerHTML = sorted.slice(0, 2).map(c => renderCommentItem(c)).join("");
+        btn.textContent = "Show more";
+        btn.classList.remove("show-less-btn");
+        btn.classList.add("show-more-btn");
+      } else {
+        listEl.innerHTML = sorted.map(c => renderCommentItem(c)).join("");
+        btn.textContent = "Show less";
+        btn.classList.remove("show-more-btn");
+        btn.classList.add("show-less-btn");
+      }
+      attachCommentListeners(container);
+      attachAvatarClickListeners(container);
     });
   });
 
